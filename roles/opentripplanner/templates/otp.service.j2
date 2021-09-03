@@ -1,0 +1,15 @@
+## NOTICE: This file is written by ansible, and any changes made here will be overwritten on
+#          next provision.
+
+[Unit]
+Description=Start OpenTripPlanner process
+After={{ otp_service_after }}
+
+[Service]
+User={{ otp_user }}
+WorkingDirectory={{ otp_bin_dir }}
+Restart=on-failure
+ExecStart=/usr/bin/java -Xmx{{otp_process_mem}} -jar {{ otp_bin_dir }}/{{ otp_jar_name }} --build --serve --port {{ otp_web_port }} {{ otp_data_dir }}
+
+[Install]
+WantedBy={{ otp_service_wantedby }}

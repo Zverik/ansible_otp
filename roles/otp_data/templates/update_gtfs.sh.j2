@@ -1,0 +1,6 @@
+#!/bin/bash
+WGET=/usr/bin/wget
+# URL="http://peatus.ee/gtfs/gtfs.zip"
+URL="http://transport.tallinn.ee/data/gtfs.zip"
+
+$WGET "$URL" -O "{{ otp_data_dir }}/gtfs.zip"

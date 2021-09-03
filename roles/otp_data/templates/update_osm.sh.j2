@@ -1,0 +1,17 @@
+#!/bin/bash
+OSMIUM=/usr/bin/osmium
+WGET=/usr/bin/wget
+SOURCE="http://download.geofabrik.de/europe/estonia-latest.osm.pbf"
+BBOX=24.500647,59.339805,25.038977,59.53254
+
+$WGET "$SOURCE" -O /tmp/estonia.osm.pbf
+if [ -n "${BBOX-}" ]; then
+  $OSMIUM extract --strategy complete_ways --bbox "$BBOX" /tmp/estonia.osm.pbf -o /tmp/estonia-crop.osm.pbf
+  mv /tmp/estonia-crop.osm.pbf /tmp/estonia.osm.pbf
+fi
+
+$OSMIUM tags-filter /tmp/estonia.osm.pbf w/highway w/public_transport=platform w/railway=platform w/park_ride=yes r/type=restriction \
+  -o {{ otp_data_dir }}/estonia.osm.pbf -f pbf,add_metadata=false
+rm /tmp/estonia.osm.pbf
+
+# TODO: pre-build osm data

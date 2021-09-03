@@ -1,0 +1,51 @@
+---
+- name: Install osmium-tool
+  become: yes
+  apt:
+    name: osmium-tool
+    state: present
+
+- name: Upload GTFS script
+  template:
+    src: update_gtfs.sh.j2
+    dest: /opt/src/update_gtfs.sh
+    mode: '0755'
+
+- name: Add GTFS script to cron
+  cron:
+    name: update gtfs
+    minute: '0'
+    hour: '3'
+    job: "/opt/src/update_gtfs.sh > /dev/null"
+
+- name: Run GTFS script
+  command: /opt/src/update_gtfs.sh
+  args:
+    creates: "{{ otp_data_dir}}/gtfs.zip"
+
+- name: Upload OSM script
+  template:
+    src: update_osm.sh.j2
+    dest: /opt/src/update_osm.sh
+    mode: '0755'
+
+- name: Add OSM script to cron
+  cron:
+    name: update osm
+    minute: '30'
+    hour: '3'
+    weekday: '0'
+    job: "/opt/src/update_osm.sh > /dev/null"
+
+- name: Run OSM script
+  command: /opt/src/update_osm.sh
+  args:
+    creates: "{{ otp_data_dir}}/estonia.osm.pbf"
+
+- name: Restart OTP each night
+  become: yes
+  cron: 
+    name: restart opentripplanner
+    minute: "0"
+    hour: "4"
+    job: "systemctl restart otp"
