@@ -1,0 +1,13 @@
+{
+  "routingDefaults": {
+    "walkSpeed": 1.2,
+    "maxWalkDistance": 2000,
+    "-walkReluctance": 2.0,
+    "debugItineraryFilter": false,
+    "groupBySimilarityKeepOne": 0.99,
+    "itineraryFilters": {
+      "debug": false,
+      "groupSimilarityKeepOne": 0.99
+    }
+  }
+}

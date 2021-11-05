@@ -30,6 +30,17 @@
     state: directory
     owner: "{{ otp_user }}"
 
+- name: Copy json configuration
+  become: yes
+  copy:
+    src: "{{ item }}"
+    dest: "{{ otp_data_dir }}"
+    owner: "{{ otp_user }}"
+  loop:
+    - build-config.json
+    - otp-config.json
+    - router-config.json
+
 - name: Install systemd service
   become: yes
   template:

@@ -1,0 +1,8 @@
+{
+    "otpFeatures" : {
+        "APIBikeRental" : false,
+        "APIGraphInspectorTile": false,
+        "APIExternalGeocoder": false
+    }
+}
+
