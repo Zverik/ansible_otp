@@ -1,0 +1,5 @@
+- name: restart photon
+  become: yes
+  service:
+    name: photon
+    state: restarted

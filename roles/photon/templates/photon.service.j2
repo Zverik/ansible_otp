@@ -1,0 +1,11 @@
+[Unit]
+Description=Start Photon process
+After=network-online.target
+
+[Service]
+User={{ photon_user }}
+WorkingDirectory={{ photon_dir }}
+Restart=on-failure
+ExecStart=/usr/bin/java -jar {{ photon_dir }}/photon-{{ photon_version }}.jar
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,40 @@
+- name: Create Photon directory
+  file:
+    path: "{{ photon_dir }}"
+    mode: "0775"
+    state: directory
+
+- name: Download Photon
+  get_url:
+    url: "https://github.com/komoot/photon/releases/download/{{ photon_version }}/photon-{{ photon_version }}.jar"
+    dest: "{{ photon_dir }}/photon-{{ photon_version }}.jar"
+
+- name: Remove old data
+  when: photon_data is defined
+  file:
+    path: "{{ photon_dir }}/photon_data"
+    state: absent
+
+- name: Upload data
+  when: photon_data is defined
+  unarchive:
+    src: "{{ photon_data }}"
+    dest: "{{ photon_dir }}"
+    creates: "{{ photon_dir }}/photon_data"
+  notify: restart photon
+
+- name: Install systemd service
+  become: yes
+  template:
+    src: photon.service.j2
+    dest: /etc/systemd/system/photon.service
+  notify: restart photon
+  register: ph_service
+
+- name: Enable Photon service
+  when: ph_service
+  become: yes
+  systemd:
+    name: photon.service
+    enabled: yes
+    daemon_reload: yes

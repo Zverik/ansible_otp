@@ -4,6 +4,7 @@ admin_email: ilya@zverev.info
 
 certbot_admin_email: ilya@zverev.info
 certbot_create_if_missing: true
+certbot_create_extra_args: ''
 certbot_certs:
   - domains:
     - otp.osmz.org
@@ -16,5 +17,5 @@ otp_jar_sha1: "b2652bba5983393bb102e6e16190f73e9c297e51"
 otp_process_mem: 2G
 
 photon_dir: /opt/src/photon
-photon_version: "0.3.5"
+photon_version: "0.5.0"
 photon_user: zverik

@@ -1,0 +1,60 @@
+#!/bin/bash
+set -u -e
+
+PHOTON_VERSION=0.5.0
+NOMINATIM_VERSION=4.4
+IMPORT_WIKIPEDIA=false
+
+# If docker container is running, something was wrong with Photon
+if [ -z "$(docker ps | grep nominatim)" ]; then
+
+# Remove stray nominatim containers
+docker rm nominatim || true
+
+# Download Photon
+echo "Downloading Photon $PHOTON_VERSION"
+rm -f photon.jar
+curl -L -s -o photon.jar "https://github.com/komoot/photon/releases/download/$PHOTON_VERSION/photon-$PHOTON_VERSION.jar"
+
+# Download and trim the extract
+echo "Downloading and trimming the OSM extract"
+BBOX=24.500647,59.339805,25.038977,59.53254
+rm -f estonia-latest.osm.pbf
+curl -L -s -O 'https://download.geofabrik.de/europe/estonia-latest.osm.pbf'
+osmium extract --bbox "$BBOX" estonia-latest.osm.pbf -o /tmp/estonia-crop.osm.pbf
+mv /tmp/estonia-crop.osm.pbf estonia-latest.osm.pbf
+
+# Start a Nominatim container
+echo "Starting Nominatim $NOMINATIM_VERSION container"
+docker run -d --rm \
+  -e PBF_PATH=/nominatim/data/estonia-latest.osm.pbf \
+  -e IMPORT_WIKIPEDIA=$IMPORT_WIKIPEDIA \
+  -e FREEZE=true \
+  -e NOMINATIM_PASSWORD=qwerty12 \
+  -p 8080:8080 -p 5433:5432 \
+  -v $(pwd):/nominatim/data \
+  --name nominatim \
+  mediagis/nominatim:$NOMINATIM_VERSION
+
+# Wait until Nominatim is ready
+until [ "$(curl -s localhost:8080/status)" == "OK" ]; do echo -n .; sleep 2; done
+echo
+
+else
+  echo "Nominatim already started, continuing with the export"
+fi
+
+# Export the Photon database
+echo "Exporting the Photon database"
+[ -e photon_data ] && rm -f photon_data_backup && mv photon_data photon_data_backup
+java -jar photon.jar -nominatim-import -host localhost -port 5433 -database nominatim -user nominatim -password qwerty12 -languages en,ee,ru
+tar -czf photon_ee_$(date +%y%m%d).tgz photon_data
+
+# Stop and remove the container
+echo "All done, stopping container and removing temporary files"
+docker stop nominatim
+
+# Remove temporary files
+rm estonia-latest.osm.pbf
+rm photon.jar
+rm -r photon_data
