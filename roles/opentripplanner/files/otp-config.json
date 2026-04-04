@@ -2,7 +2,8 @@
     "otpFeatures" : {
         "APIBikeRental" : false,
         "APIGraphInspectorTile": false,
-        "APIExternalGeocoder": false
+        "APIExternalGeocoder": false,
+        "ActuatorAPI": true
     }
 }
 

@@ -2,7 +2,7 @@
 - name: Install OpenJDK
   become: yes
   apt:
-    name: openjdk-11-jre-headless
+    name: openjdk-21-jre-headless
     state: present
 
 - name: Create OpenTripPlanner binary directory

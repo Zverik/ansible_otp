@@ -12,8 +12,8 @@ certbot_certs:
 otp_bin_dir: /opt/src/opentripplanner
 otp_data_dir: /var/otp
 otp_user: zverik
-otp_version: "2.0.0"
-otp_jar_sha1: "b2652bba5983393bb102e6e16190f73e9c297e51"
+otp_version: "2.4.0"
+otp_jar_sha1: b5489347039e11d566cdb5a1e44b28134c1af76a
 otp_process_mem: 2G
 
 photon_dir: /opt/src/photon

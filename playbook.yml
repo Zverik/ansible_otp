@@ -9,12 +9,11 @@
   become: yes
   roles:
     - geerlingguy.ntp
-    - geerlingguy.certbot
     - firewall
 
 - hosts: all
   remote_user: zverik
   roles:
-    - opentripplanner
-    - otp_data
-    - photon
+    - { role: opentripplanner, tags: otp }
+    - { role: otp_data, tags: data }
+    - { role: photon, tags: photon }
