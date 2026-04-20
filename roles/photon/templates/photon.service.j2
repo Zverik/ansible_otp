@@ -6,6 +6,6 @@ After=network-online.target
 User={{ photon_user }}
 WorkingDirectory={{ photon_dir }}
 Restart=on-failure
-ExecStart=/usr/bin/java -jar {{ photon_dir }}/photon-{{ photon_version }}.jar
+ExecStart=/usr/bin/java -jar {{ photon_dir }}/photon-{{ photon_version }}.jar -listen-ip {{ ansible_facts['default_ipv4']['address'] }}
 [Install]
 WantedBy=multi-user.target

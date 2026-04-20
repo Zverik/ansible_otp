@@ -1,8 +1,8 @@
 #!/bin/bash
 set -u -e
 
-PHOTON_VERSION=0.5.0
-NOMINATIM_VERSION=4.4
+PHOTON_VERSION=1.1.0
+NOMINATIM_VERSION=5.3
 IMPORT_WIKIPEDIA=false
 
 # If docker container is running, something was wrong with Photon
@@ -22,7 +22,8 @@ BBOX=24.500647,59.339805,25.038977,59.53254
 rm -f estonia-latest.osm.pbf
 curl -L -s -O 'https://download.geofabrik.de/europe/estonia-latest.osm.pbf'
 osmium extract --bbox "$BBOX" estonia-latest.osm.pbf -o /tmp/estonia-crop.osm.pbf
-mv /tmp/estonia-crop.osm.pbf estonia-latest.osm.pbf
+mkdir -p nominatim_data
+mv /tmp/estonia-crop.osm.pbf nominatim_data/estonia-latest.osm.pbf
 
 # Start a Nominatim container
 echo "Starting Nominatim $NOMINATIM_VERSION container"
@@ -32,7 +33,7 @@ docker run -d --rm \
   -e FREEZE=true \
   -e NOMINATIM_PASSWORD=qwerty12 \
   -p 8080:8080 -p 5433:5432 \
-  -v $(pwd):/nominatim/data \
+  -v $(pwd)/nominatim_data:/nominatim/data \
   --name nominatim \
   mediagis/nominatim:$NOMINATIM_VERSION
 
@@ -58,3 +59,4 @@ docker stop nominatim
 rm estonia-latest.osm.pbf
 rm photon.jar
 rm -r photon_data
+rm -r nominatim_data
