@@ -14,7 +14,7 @@ otp_data_dir: /var/otp
 otp_user: zverik
 otp_version: "2.4.0"
 otp_jar_sha1: b5489347039e11d566cdb5a1e44b28134c1af76a
-otp_process_mem: 3200M
+otp_process_mem: 2700M
 
 photon_dir: /opt/src/photon
 photon_version: "1.1.0"
